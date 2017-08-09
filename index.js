@@ -13,6 +13,7 @@ var count = 0;
  * - param {String} qs parameter (defaults to `callback`)
  * - timeout {Number} how long after the request until a timeout error
  *   is emitted (defaults to `15000`)
+ * - data {Object} additional parameters for request (encoded as a part of URL)
  *
  * @param {String} url
  * @param {Object} options optional options
@@ -23,6 +24,7 @@ var jsonp = function(url, options) {
 
     var prefix = options.prefix || '__jp';
     var param = options.param || 'callback';
+    var data = options.data || {}
     var timeout = options.timeout ? options.timeout : 15000;
     var target = document.getElementsByTagName('script')[0] || document.head;
     var script;
@@ -34,6 +36,17 @@ var jsonp = function(url, options) {
 
     // Generate a unique id for the request.
     var id = prefix + (count++);
+
+    // add querystring
+    data[param] = id;
+
+    var query = '';
+    for (var key in data) {
+        query += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
+    }
+
+    url = (~url.indexOf('?') ? '' : '?') + query;
+    url = url.replace('?&', '?');
 
     cleanup = function() {
         // Remove the script tag.
@@ -60,10 +73,6 @@ var jsonp = function(url, options) {
             cleanup();
             resolve(data);
         };
-
-        // Add querystring component
-        url += (~url.indexOf('?') ? '&' : '?') + param + '=' + encodeURIComponent(id);
-        url = url.replace('?&', '?');
 
         // Create script.
         script = document.createElement('script');

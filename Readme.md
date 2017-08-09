@@ -26,6 +26,8 @@ $ jspm install npm:jsonp-promise
     is emitted. `0` to disable (defaults to `15000`)
   - `prefix` (`String`) prefix for the global callback functions that
     handle jsonp responses (defaults to `__jp`)
+  - `data` (`Object`) additional parameters for request (encoded as a part 
+    of URL), optional
 
 Returns an object containing two properties:
 - `promise` a promise which will be resolved if the jsonp request succeeds,
